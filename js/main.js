@@ -2,7 +2,7 @@ const edadPersona = parseInt(prompt('Ingrese su edad'))
 let dineroEncuenta = parseInt(prompt('Ingrese Dinero en su Cuenta'))
 let cuentaGral = 0
 let ivaCgral = 0
-let artSeleccionados = ""
+let carrito = ""
 let flagBr = false
 let promo = ""
 /*Funcion flecha para calcular el iva a la cuenta */
@@ -12,6 +12,11 @@ const iva = x => x * 0.21;
 function fMensaje (mAlert, mConsola){
     alert(mAlert);
     console.log(mConsola);
+}
+/*Funcion basica para simular el carrito*/
+function agregaCarrito (articulo){
+    carrito = carrito + articulo + " - "
+    console.log("Se agrego al carrito : " + articulo)
 }
 /*Sumamos el precio de cada articulo a la cuenta */
 function precioArt (articulo, cuenta){
@@ -58,7 +63,7 @@ if (edadPersona >= 18) { /*El usuario debe ser mayor o igual a 18 años*/
             for (let i = 0; i < cantArt; i++) {
                 let artTemp = prompt('Escriba el nombre del producto que desea:\n - Vaso($50) \n - Plato($150) \n - Heladera($45.000) \n - Caja($25) \n - Jarra($250) \n "* los productos no tienen IVA" ')
                 if ((artTemp == "Vaso") || (artTemp == "Plato") || (artTemp == "Heladera") || (artTemp == "Caja") || (artTemp == "Jarra")) {
-                    artSeleccionados = artSeleccionados + artTemp + " - "
+                    agregaCarrito(artTemp)
                 } else {
                     fMensaje ("El articulo no esta disponible o no se ingreso correctamente", "El articulo debe estar en la lista actual")
                     flagBr = true
@@ -79,7 +84,7 @@ if (edadPersona >= 18) { /*El usuario debe ser mayor o igual a 18 años*/
             if (!flagBr) { /*Solo entramos si no tuvimos un break antes*/
                 cuentaGral = promociones (edadPersona, cuentaGral)
                 ivaCgral = cuentaGral + iva(cuentaGral)
-                console.log("Articulos Seleccionados: " + artSeleccionados);
+                console.log("Articulos Seleccionados: " + carrito);
                 console.log("Total Cuenta a Pagar: $" + cuentaGral + " Total c/IVA: $"+ ivaCgral );
                 console.log(promo);
                 contComp = prompt("Desea Seguir comprando? SI/NO");
