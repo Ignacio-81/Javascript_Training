@@ -5,11 +5,12 @@ let artSeleccionados = ""
 let flagBr = false
 
 
-if (edadPersona >= 18) {
+if (edadPersona >= 18) { /*El usuario debe ser mayor o igual a 18 años*/ 
     alert("Bienvenido!");
-    do {
+    do { /* Bucle para para la compra cuando el usuario escribe NO*/
         const cantArt = prompt('Ingrese la cantidad de productos a comprar:')
         if ((cantArt != null) && (cantArt > 0) && (cantArt < 10)) {
+            /*Bucle para tomar el pedido de productos */ 
             for (let i = 0; i < cantArt; i++) {
                 let artTemp = prompt('Escriba el nombre del producto que desea:\n - Vaso($50) \n - Plato($150) \n - Heladera($45.000) \n - Caja($25) \n - Jarra($250) ')
                 if ((artTemp == "Vaso") || (artTemp == "Plato") || (artTemp == "Heladera") || (artTemp == "Caja") || (artTemp == "Jarra")) {
@@ -20,7 +21,7 @@ if (edadPersona >= 18) {
                     flagBr = true
                     break;
                 }
-
+                /* Sumamos el precio del proudcto a la cuenta total*/    
                 switch (artTemp) {
 
                     case "Vaso":
@@ -39,7 +40,7 @@ if (edadPersona >= 18) {
                         cuenta += 250;
                         break;
                 }
-
+                /*Controlamos que el usuario tenga dinero en la cuenta */    
                 if (dineroEncuenta <= cuenta) {
                     alert("No tienes mas saldo en tu cuenta")
                     console.log("Dinero en cuenta:" + dineroEncuenta + " Valor compra:" + cuenta)
@@ -48,7 +49,7 @@ if (edadPersona >= 18) {
                 }
 
             }
-            if (!flagBr) {
+            if (!flagBr) { /*Solo entramos si no tuvimos un break antes*/
                 console.log("Articulos Seleccionados: " + artSeleccionados);
                 console.log("Total Cuenta a Pagar: " + cuenta);
                 contComp = prompt("Desea Seguir comprando? SI/NO");
@@ -57,7 +58,10 @@ if (edadPersona >= 18) {
             alert("EL valor no puede estar vacio, tiene que ser mayor a 0 y menor a 10")
         }
     } while (contComp != "NO")
-} else {
+
+
+
+} else {/*SAlida si el usuaio no es mayor de 18 años*/
     alert("Necesitas ser mayor de edad")
     console.log("Necesitas ser mayor de 18 años para poder comprar aqui.")
 }
