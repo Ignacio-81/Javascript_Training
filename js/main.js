@@ -1,14 +1,15 @@
 const edadPersona = parseInt(prompt('Ingrese su edad'))
 let dineroEncuenta = parseInt(prompt('Ingrese Dinero en su Cuenta'))
-let cuentaCarrito = 0
-let ivaCgral = 0
-let carrito = []
-let stockProductos = []
+let cuentaCarrito = 0 // lleva la cuenta de dinero en el carrito para la compra
+let ivaCgral = 0 //tiene el valor final + IVA de la cuenta de carrito
+let carrito = [] // lista de productos en el carrito
+let stockProductos = [] //Stock de productos de la tienda
 let flagBr = false
-let promo = ""
-/*Funcion flecha para calcular el iva a la cuenta */
-const iva = x => x * 0.21;
+let promo = "" //Mensaje para las promos
 
+const iva = x => x * 0.21; //Funcion flecha para calcular el iva a la cuenta 
+
+/*Definimos la clase para los productos */
 class Producto {
     constructor(nombre, precio, cantidad) {
         this.nombre = nombre.toLowerCase();
@@ -26,7 +27,6 @@ class Producto {
 
 }
 
-
 /*Funcion para mostrar mensaje generico mas aclaracion/Detalle por consola*/
 function fMensaje(mAlert, mConsola) {
     alert(mAlert);
@@ -41,7 +41,7 @@ function agregaCarrito(articulo) {
                 stockProductos[index].venta()
                 break;
             } else {
-                return false
+                return false // El producto que queremos agregar no tiene mas stock
             }
         }
         index++;
@@ -54,7 +54,7 @@ function agregaCarrito(articulo) {
     console.log("Stock restante del articulo : " + stockProductos[index].cantidad)
     return true
 }
-
+/*Funcion para calcular promociones*/
 function promociones(edad, cuenta) {
     promo = 0
     if (edad > 50) {
@@ -66,7 +66,7 @@ function promociones(edad, cuenta) {
     }
     return cuenta
 }
-
+/*Funcion para dar de alta el portfolio de productos*/
 function altaProductos() {
     const vaso = new Producto("vaso", 50, 5)
     const plato = new Producto("plato", 150, 10)
@@ -88,7 +88,7 @@ if (edadPersona >= 18) { /*El usuario debe ser mayor o igual a 18 años*/
                 artTemp.toLowerCase()
                 if ((artTemp == "vaso") || (artTemp == "plato") || (artTemp == "heladera") || (artTemp == "caja") || (artTemp == "jarra")) {
 
-                    if (!agregaCarrito(artTemp)) {
+                    if (!agregaCarrito(artTemp)) { /*se comprueba segun retorno de funcion carrito si el producto tiene stock*/
                         alert("Producto sin stock");
                         i--;
                     }
