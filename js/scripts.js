@@ -1,3 +1,11 @@
+/*!
+* Start Bootstrap - Shop Homepage v5.0.5 (https://startbootstrap.com/template/shop-homepage)
+* Copyright 2013-2022 Start Bootstrap
+* Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-shop-homepage/blob/master/LICENSE)
+*/
+// This file is intentionally blank
+// Use this file to add JavaScript to your project
+
 const edadPersona = parseInt(prompt('Ingrese su edad'))
 let dineroEncuenta = parseInt(prompt('Ingrese Dinero en su Cuenta'))
 let cuentaCarrito = 0 // lleva la cuenta de dinero en el carrito para la compra
@@ -125,4 +133,3 @@ if (edadPersona >= 18) { /*El usuario debe ser mayor o igual a 18 años*/
 } else {/*SAlida si el usuaio no es mayor de 18 años*/
     fMensaje("Necesitas ser mayor de edad", "Necesitas ser mayor de 18 años para poder comprar aqui.")
 }
-
