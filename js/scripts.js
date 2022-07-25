@@ -8,6 +8,7 @@
 
 const edadPersona = parseInt(prompt('Ingrese su edad'))
 let dineroEncuenta = parseInt(prompt('Ingrese Dinero en su Cuenta'))
+let nombre = prompt('Ingrese Su nombre').toUpperCase();
 let cuentaCarrito = 0 // lleva la cuenta de dinero en el carrito para la compra
 let ivaCgral = 0 //tiene el valor final + IVA de la cuenta de carrito
 let carrito = [] // lista de productos en el carrito
@@ -85,18 +86,34 @@ function altaProductos() {
 }
 
 stockProductos = altaProductos()
-if (edadPersona >= 18) { /*El usuario debe ser mayor o igual a 18 años*/
+//Agregar nombre del usuario en el navegador
+console.log(nombre)
+const titulo = document.querySelector("h1");
+titulo.textContent = "Hola "+nombre;
+//Agregamos el titulo de los articualos disponibles.
+const tituloArt = document.querySelectorAll("h5");
+console.log(tituloArt)
+console.log(tituloArt[0].innerText)
+let i=0
+for (const producto of stockProductos){
+    tituloArt[i].innerText = stockProductos[i].nombre;
+    i++;
+}
+
+/*
+
+if (edadPersona >= 18) { //El usuario debe ser mayor o igual a 18 años
     alert("Bienvenido!");
-    do { /* Bucle para para la compra cuando el usuario escribe NO*/
+    do { // Bucle para para la compra cuando el usuario escribe NO
         const cantArt = parseInt(prompt('Ingrese la cantidad de productos a comprar:'))
         if ((cantArt != null) && (cantArt > 0) && (cantArt < 20)) {
-            /*Bucle para tomar el pedido de productos */
+            //Bucle para tomar el pedido de productos 
             for (let i = 0; i < cantArt; i++) {
                 let artTemp = prompt('Escriba el nombre del producto que desea:\n - Vaso($50) \n - Plato($150) \n - Heladera($45.000) \n - Caja($25) \n - Jarra($250) \n "* los productos no tienen IVA" ')
                 artTemp.toLowerCase()
                 if ((artTemp == "vaso") || (artTemp == "plato") || (artTemp == "heladera") || (artTemp == "caja") || (artTemp == "jarra")) {
 
-                    if (!agregaCarrito(artTemp)) { /*se comprueba segun retorno de funcion carrito si el producto tiene stock*/
+                    if (!agregaCarrito(artTemp)) { //se comprueba segun retorno de funcion carrito si el producto tiene stock
                         alert("Producto sin stock");
                         i--;
                     }
@@ -107,7 +124,7 @@ if (edadPersona >= 18) { /*El usuario debe ser mayor o igual a 18 años*/
                     break;
                 }
 
-                /*Controlamos que el usuario tenga dinero en la cuenta */
+                //Controlamos que el usuario tenga dinero en la cuenta 
                 if (dineroEncuenta <= ivaCgral) {
                     fMensaje("No tienes mas saldo en tu cuenta", "Dinero en cuenta:" + dineroEncuenta + " Valor compra:" + ivaCgral)
                     flagBr = false
@@ -116,7 +133,7 @@ if (edadPersona >= 18) { /*El usuario debe ser mayor o igual a 18 años*/
 
             }
 
-            if (!flagBr) { /*Solo entramos si no tuvimos un break antes*/
+            if (!flagBr) { //Solo entramos si no tuvimos un break antes
                 cuentaCarrito = promociones(edadPersona, cuentaCarrito)
                 ivaCgral = cuentaCarrito + iva(cuentaCarrito)
                 console.log("Articulos Seleccionados: " + carrito);
@@ -130,6 +147,7 @@ if (edadPersona >= 18) { /*El usuario debe ser mayor o igual a 18 años*/
         }
     } while (contComp != "NO")
 
-} else {/*SAlida si el usuaio no es mayor de 18 años*/
+} else {//SAlida si el usuaio no es mayor de 18 años
     fMensaje("Necesitas ser mayor de edad", "Necesitas ser mayor de 18 años para poder comprar aqui.")
 }
+*/
