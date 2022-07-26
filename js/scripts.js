@@ -80,7 +80,6 @@ function altaProductos() {
 
 stockProductos = altaProductos()
 //Agregar nombre del usuario en el navegador
-console.log(nombre)
 const titulo = document.querySelector("h1");
 titulo.textContent = "Hola "+nombre;
 
@@ -97,9 +96,7 @@ for (const producto of stockProductos){
     i++;
 }
 
-
-console.dir(document);
-console.dir(document.body);
+//DEJO ESTE CODIGO COMENTADO QUE ES DEL CODIGO ANTERIOR PARA RE UTILIZAR MAS ADELANTE
 /*
 
 if (edadPersona >= 18) { //El usuario debe ser mayor o igual a 18 años
