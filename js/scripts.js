@@ -1,13 +1,6 @@
-/*!
-* Start Bootstrap - Shop Homepage v5.0.5 (https://startbootstrap.com/template/shop-homepage)
-* Copyright 2013-2022 Start Bootstrap
-* Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-shop-homepage/blob/master/LICENSE)
-*/
-// This file is intentionally blank
-// Use this file to add JavaScript to your project
 
-const edadPersona = parseInt(prompt('Ingrese su edad'))
-let dineroEncuenta = parseInt(prompt('Ingrese Dinero en su Cuenta'))
+//const edadPersona = parseInt(prompt('Ingrese su edad'))
+//let dineroEncuenta = parseInt(prompt('Ingrese Dinero en su Cuenta'))
 let nombre = prompt('Ingrese Su nombre').toUpperCase();
 let cuentaCarrito = 0 // lleva la cuenta de dinero en el carrito para la compra
 let ivaCgral = 0 //tiene el valor final + IVA de la cuenta de carrito
@@ -90,16 +83,23 @@ stockProductos = altaProductos()
 console.log(nombre)
 const titulo = document.querySelector("h1");
 titulo.textContent = "Hola "+nombre;
-//Agregamos el titulo de los articualos disponibles.
+
+//Agregamos el titulo de los articulos disponibles.
 const tituloArt = document.querySelectorAll("h5");
-console.log(tituloArt)
-console.log(tituloArt[0].innerText)
+const tarjeta = document.body.querySelectorAll(".card-body"); 
 let i=0
 for (const producto of stockProductos){
-    tituloArt[i].innerText = stockProductos[i].nombre;
+    tituloArt[i+2].innerText = producto.nombre;
+    let p = document.createElement("p");
+    p.className = "text-center"
+    p.innerHTML = `$${producto.precio}`
+    tarjeta[i+2].append(p);
     i++;
 }
 
+
+console.dir(document);
+console.dir(document.body);
 /*
 
 if (edadPersona >= 18) { //El usuario debe ser mayor o igual a 18 años
