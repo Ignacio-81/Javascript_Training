@@ -2,9 +2,9 @@
 //const edadPersona = parseInt(prompt('Ingrese su edad'))
 //let dineroEncuenta = parseInt(prompt('Ingrese Dinero en su Cuenta'))
 let userName = prompt('Please put your User Name').toUpperCase();
-let cuentaCarrito = 0 // lleva la cuenta de dinero en el carrito para la compra
+let cartPrice = 0 // lleva la cuenta de dinero en el carrito para la compra
 let ivaCgral = 0 //tiene el valor final + IVA de la cuenta de carrito
-let carrito = [] // lista de productos en el carrito
+let shopCart = [] // lista de productos en el carrito
 let stockProducts = [] //Stock de productos de la tienda
 let flagBr = false
 let promo = "" //Mensaje para las promos
@@ -37,25 +37,20 @@ function fMensaje(mAlert, mConsola) {
     console.log(mConsola);
 }
 /*Funcion basica para simular el carrito*/
-function agregaCarrito(articulo) {
-    let index = 0
-    for (const producto of stockProductos) {
-        if (producto.nombre == articulo) {
-            if (producto.disponible) {
-                stockProductos[index].venta()
-                break;
-            } else {
-                return false // El producto que queremos agregar no tiene mas stock
-            }
-        }
-        index++;
-    }
-    carrito.push(articulo)
-    /* Sumamos el precio del proudcto a la cuenta total*/
-    cuentaCarrito = cuentaCarrito + stockProductos[index].precio
+function add2Cart(product) {
 
-    console.log("Se agrego al carrito : " + articulo)
-    console.log("Stock restante del articulo : " + stockProductos[index].cantidad)
+    if (product.available) {
+        product.sell()
+    } else {
+        return false // El producto que queremos agregar no tiene mas stock
+    }
+
+    shopCart.push(product)
+    /* Sumamos el precio del proudcto a la cuenta total*/
+    cartPrice = cartPrice + product.price
+
+    console.log("Added to ShopCart: " + product)
+    console.log("Ramaining Stock of this product : " + product.quantity)
     return true
 }
 /*Funcion para calcular promociones*/
@@ -106,7 +101,7 @@ stockProducts.forEach((product) => {
         </div>
         <!-- Product actions-->
         <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-            <div class="text-center"><a id="${idButton}" class="btn btn-outline-dark mt-auto" href="#">Add to cart </a></div>
+            <div class="text-center"><a id="${idButton}" data-id="${product.id}" class="btn btn-outline-dark mt-auto" href="#">Add to cart </a></div>
         </div>
     </div>
 </div>`;
@@ -114,8 +109,11 @@ stockProducts.forEach((product) => {
 
 stockProducts.forEach((product) => {
     const idButton = `add-cart${product.id}` 
-    document.getElementById(idButton).addEventListener('click', () => {
+    document.getElementById(idButton).addEventListener('click', (event) => {
+        add2Cart(product)
         alert("You added "+product.name.toUpperCase()+" to the Shopcart")
+        document.getElementById("cartCount").innerText = shopCart.length
+        console.log(shopCart)
     })
 })
 
