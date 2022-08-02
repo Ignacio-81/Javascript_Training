@@ -6,7 +6,7 @@ let cartPrice = 0 // lleva la cuenta de dinero en el carrito para la compra
 let ivaCgral = 0 //tiene el valor final + IVA de la cuenta de carrito
 let shopCart = [] // lista de productos en el carrito
 let stockProducts = [] //Stock de productos de la tienda
-let flagBr = false
+let flagchkp = false
 let promo = "" //Mensaje para las promos
 
 const iva = x => x * 0.21; //Funcion flecha para calcular el iva a la cuenta 
@@ -68,8 +68,8 @@ function promociones(edad, cuenta) {
 /*function to create new products*/
 function newProducts() {
     const prod1 = new Product(1,"Ferrari Roja", 50, 5, "./assets/img/ferrari.jpg")
-    const prod2 = new Product(2,"Camaro Amarillo", 150, 10, "./assets/img/camaro.jpg")
-    const prod3 = new Product(3,"Combo x5", 45000, 10, "./assets/img/combo.jpg")
+    const prod2 = new Product(2,"Camaro Amarillo", 75, 10, "./assets/img/camaro.jpg")
+    const prod3 = new Product(3,"Combo x5", 4500, 10, "./assets/img/combo.jpg")
     const prod4 = new Product(4,"Delorian Plata", 25, 10, "./assets/img/delorian.jpg")
     const prod5 = new Product(5,"Audi TT Blanco", 250, 10, "./assets/img/audiTT.jpg")
     return [prod1, prod2, prod3, prod4, prod5]
@@ -109,13 +109,34 @@ stockProducts.forEach((product) => {
 
 stockProducts.forEach((product) => {
     const idButton = `add-cart${product.id}` 
-    document.getElementById(idButton).addEventListener('click', (event) => {
+    document.getElementById(idButton).addEventListener('click', () => {
         add2Cart(product)
         alert("You added "+product.name.toUpperCase()+" to the Shopcart")
         document.getElementById("cartCount").innerText = shopCart.length
         console.log(shopCart)
     })
 })
+
+inputText = document.getElementById("ManualImput")
+inputText.addEventListener("keydown", (event) => {
+    
+    if(event.key == "Enter"){ //Tecla enter
+        flagchkp = false      
+        stockProducts.forEach((product) =>{
+            if (product.name == inputText.value){
+                add2Cart(product)
+                alert("You added "+product.name.toUpperCase()+" to the Shopcart")
+                document.getElementById("cartCount").innerText = shopCart.length
+                flagchkp = true   
+            }
+        })
+        if (!flagchkp) {
+            fMensaje("This product does not exist", "You need to enter same name as on the card")
+            
+        }
+        inputText.value = "" 
+    }
+ });
 
 //DEJO ESTE CODIGO COMENTADO QUE ES DEL CODIGO ANTERIOR PARA RE UTILIZAR MAS ADELANTE
 /*
