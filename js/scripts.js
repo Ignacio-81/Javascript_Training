@@ -1,10 +1,14 @@
+//get the chop cart information from local storage
+let shopCart = JSON.parse(localStorage.getItem("shopCart")) ?? []; //
+//sum the prices of the shop cart to know initian price.
+let cartPrice = shopCart.reduce((acc, product) => acc + product.price, 0);
+//show on shop cart button the initical value
+document.getElementById("cartCount").innerHTML = `${shopCart.length} - $${cartPrice}`;
 
 //const edadPersona = parseInt(prompt('Ingrese su edad'))
 //let dineroEncuenta = parseInt(prompt('Ingrese Dinero en su Cuenta'))
 let userName = prompt('Please put your User Name').toUpperCase();
-let cartPrice = 0 // lleva la cuenta de dinero en el carrito para la compra
 let ivaCgral = 0 //tiene el valor final + IVA de la cuenta de carrito
-let shopCart = [] // lista de productos en el carrito
 let stockProducts = [] //Stock de productos de la tienda
 let flagchkp = false
 let promo = "" //Mensaje para las promos
@@ -31,24 +35,27 @@ class Product {
 
 }
 
-/*Funcion para mostrar mensaje generico mas aclaracion/Detalle por consola*/
+/*message function */
 function fMensaje(mAlert, mConsola) {
     alert(mAlert);
     console.log(mConsola);
 }
-/*Funcion basica para simular el carrito*/
+//Cart function
 function add2Cart(product) {
 
-    if (product.available) {
+    if (product.available) { //check if the product is available
         product.sell()
     } else {
-        return false // El producto que queremos agregar no tiene mas stock
+        return false // the product has no Stock 
     }
 
     shopCart.push(product)
-    /* Sumamos el precio del proudcto a la cuenta total*/
-    cartPrice = cartPrice + product.price
 
+    cartPrice = cartPrice + product.price // adding product price to cart total cost
+    alert("You added " + product.name.toUpperCase() + " to the Shopcart")
+    document.getElementById("cartCount").innerHTML = `${shopCart.length} - $${cartPrice}`; //Adding total items and cost on en cart button
+    localStorage.setItem("shopCart", JSON.stringify(shopCart)); //save information on the local storage
+    localStorage.setItem("totalCarrito", shopCart.length) //save total items on the localstorage
     console.log("Added to ShopCart: " + product)
     console.log("Ramaining Stock of this product : " + product.quantity)
     return true
@@ -67,25 +74,25 @@ function promociones(edad, cuenta) {
 }
 /*function to create new products*/
 function newProducts() {
-    const prod1 = new Product(1,"Ferrari Roja", 50, 5, "./assets/img/ferrari.jpg")
-    const prod2 = new Product(2,"Camaro Amarillo", 75, 10, "./assets/img/camaro.jpg")
-    const prod3 = new Product(3,"Combo x5", 4500, 10, "./assets/img/combo.jpg")
-    const prod4 = new Product(4,"Delorian Plata", 25, 10, "./assets/img/delorian.jpg")
-    const prod5 = new Product(5,"Audi TT Blanco", 250, 10, "./assets/img/audiTT.jpg")
+    const prod1 = new Product(1, "Ferrari Roja", 50, 5, "./assets/img/ferrari.jpg")
+    const prod2 = new Product(2, "Camaro Amarillo", 75, 10, "./assets/img/camaro.jpg")
+    const prod3 = new Product(3, "Combo x5", 4500, 10, "./assets/img/combo.jpg")
+    const prod4 = new Product(4, "Delorian Plata", 25, 10, "./assets/img/delorian.jpg")
+    const prod5 = new Product(5, "Audi TT Blanco", 250, 10, "./assets/img/audiTT.jpg")
     return [prod1, prod2, prod3, prod4, prod5]
 }
 
 stockProducts = newProducts()
 //Add user name to the navBar
 const titulo = document.querySelector("h1");
-titulo.textContent = "Hello "+userName;
+titulo.textContent = "Hello " + userName;
 
 //Agregamos el titulo de los articulos disponibles.
 const tituloArt = document.querySelectorAll("h5");
-const tarjeta = document.body.querySelectorAll(".card-body"); 
+const tarjeta = document.body.querySelectorAll(".card-body");
 
 stockProducts.forEach((product) => {
-    const idButton = `add-cart${product.id}` 
+    const idButton = `add-cart${product.id}`
     document.getElementById("section-card").innerHTML += `<div class="col mb-5">
     <div class="card h-100">
         <!-- Product image-->
@@ -107,86 +114,78 @@ stockProducts.forEach((product) => {
 </div>`;
 })
 
-stockProducts.forEach((product) => {
-    const idButton = `add-cart${product.id}` 
-    document.getElementById(idButton).addEventListener('click', () => {
-        add2Cart(product)
-        alert("You added "+product.name.toUpperCase()+" to the Shopcart")
-        document.getElementById("cartCount").innerText = shopCart.length
-        console.log(shopCart)
-    })
-})
-
 inputText = document.getElementById("ManualImput")
 inputText.addEventListener("keydown", (event) => {
-    
-    if(event.key == "Enter"){ //Tecla enter
-        flagchkp = false      
-        stockProducts.forEach((product) =>{
-            if (product.name == inputText.value){
+
+    if (event.key == "Enter") { //Tecla enter
+        flagchkp = false
+        stockProducts.forEach((product) => {
+            if (product.name == inputText.value) {
                 add2Cart(product)
-                alert("You added "+product.name.toUpperCase()+" to the Shopcart")
-                document.getElementById("cartCount").innerText = shopCart.length
-                flagchkp = true   
+                flagchkp = true
             }
         })
         if (!flagchkp) {
             fMensaje("This product does not exist", "You need to enter same name as on the card")
-            
+
         }
-        inputText.value = "" 
+        inputText.value = ""
     }
- });
+});
 
-//DEJO ESTE CODIGO COMENTADO QUE ES DEL CODIGO ANTERIOR PARA RE UTILIZAR MAS ADELANTE
-/*
+//Event listener
+document.addEventListener('click', (e) => {
+    // Retrieve id from clicked element
+    let elementId = e.target.id;
+    // If element has id
+    console.log(elementId)
+    str = elementId.slice(0, 8)
+    if ((elementId == "cartButton") || (elementId == "cartCount")) {
+        document.getElementById("cart-modal").innerHTML = ""
+        shopCart.forEach((product) => {
 
-if (edadPersona >= 18) { //El usuario debe ser mayor o igual a 18 años
-    alert("Bienvenido!");
-    do { // Bucle para para la compra cuando el usuario escribe NO
-        const cantArt = parseInt(prompt('Ingrese la cantidad de productos a comprar:'))
-        if ((cantArt != null) && (cantArt > 0) && (cantArt < 20)) {
-            //Bucle para tomar el pedido de productos 
-            for (let i = 0; i < cantArt; i++) {
-                let artTemp = prompt('Escriba el nombre del producto que desea:\n - Vaso($50) \n - Plato($150) \n - Heladera($45.000) \n - Caja($25) \n - Jarra($250) \n "* los productos no tienen IVA" ')
-                artTemp.toLowerCase()
-                if ((artTemp == "vaso") || (artTemp == "plato") || (artTemp == "heladera") || (artTemp == "caja") || (artTemp == "jarra")) {
+            document.getElementById("cart-modal").innerHTML += `
+            <div class="d-flex flex-row justify-content-between align-items-center p-2 bg-white mt-4 px-3 rounded">
+            <div class="mr-1"><img class="rounded" src="${product.img}" width="70"></div>
+            <div class="d-flex flex-column align-items-center product-details"><span class="font-weight-bold">${product.name}</span>
 
-                    if (!agregaCarrito(artTemp)) { //se comprueba segun retorno de funcion carrito si el producto tiene stock
-                        alert("Producto sin stock");
-                        i--;
-                    }
+                <div class="d-flex flex-row product-desc">
+                    <div class="size mr-1"><span class="text-grey">Qty Available:</span><span class="font-weight-bold">&nbsp;${product.quantity}</span></div>
+                </div>
+               </div>
+            <div class="d-flex flex-row align-items-center qty"><i class="fa fa-minus text-danger"></i>
+                <h5 class="text-grey mt-1 mr-1 ml-1">1</h5><i class="fa fa-plus text-success"></i></div>
+            <div>
+                <h5 class="text-grey">$${product.price}</h5>
+            </div>
+            <div class="d-flex align-items-center"><i class="fa fa-trash mb-1 text-danger"></i></div>
+            </div>`;
 
-                } else {
-                    fMensaje("El articulo no esta disponible o no se ingreso correctamente", "El articulo debe estar en la lista actual")
-                    flagBr = true
-                    break;
-                }
-
-                //Controlamos que el usuario tenga dinero en la cuenta 
-                if (dineroEncuenta <= ivaCgral) {
-                    fMensaje("No tienes mas saldo en tu cuenta", "Dinero en cuenta:" + dineroEncuenta + " Valor compra:" + ivaCgral)
-                    flagBr = false
-                    break;
-                }
-
-            }
-
-            if (!flagBr) { //Solo entramos si no tuvimos un break antes
-                cuentaCarrito = promociones(edadPersona, cuentaCarrito)
-                ivaCgral = cuentaCarrito + iva(cuentaCarrito)
-                console.log("Articulos Seleccionados: " + carrito);
-                console.log("Total Cuenta a Pagar: $" + cuentaCarrito + " Total c/IVA: $" + ivaCgral);
-                console.log(promo);
-                contComp = prompt("Desea Seguir comprando? SI/NO");
-                contComp = contComp.toUpperCase();
-            }
+        })
+    } else if (elementId == "cart-remove") {
+        if (confirm('Are you sure you want to erase all items?')) {
+            shopCart = [];
+            cartPrice = 0;
+            document.getElementById("cart-modal").innerHTML = ""
+            localStorage.removeItem("shopCart")
+            localStorage.removeItem("totalCarrito")
+            document.getElementById("cartCount").innerHTML = "0";
+            console.log('All cart items were deleted');
         } else {
-            fMensaje("Introduzca un valor entre 0 a 20", "El valor no puede estar vacio , rango:0-10")
+            // Do nothing!
+            console.log('No action');
         }
-    } while (contComp != "NO")
+    } else if (str == "add-cart") {
+        stockProducts.forEach((product) => {
+            const idButton = `add-cart${product.id}`
+            if (elementId == idButton) {
+                add2Cart(product)
+                console.log(shopCart)
+            }
+        })
 
-} else {//SAlida si el usuaio no es mayor de 18 años
-    fMensaje("Necesitas ser mayor de edad", "Necesitas ser mayor de 18 años para poder comprar aqui.")
+    } else {
+        console.log("An element without an id was clicked.");
+    }
 }
-*/
+);
