@@ -1,20 +1,3 @@
-//get the chop cart information from local storage
-let shopCart = JSON.parse(localStorage.getItem("shopCart")) ?? []; //
-//sum the prices of the shop cart to know initian price.
-let cartPrice = shopCart.reduce((acc, product) => acc + product.price, 0);
-//show on shop cart button the initical value
-document.getElementById("cartCount").innerHTML = `${shopCart.length} - $${cartPrice}`;
-
-//const edadPersona = parseInt(prompt('Ingrese su edad'))
-//let dineroEncuenta = parseInt(prompt('Ingrese Dinero en su Cuenta'))
-let userName = prompt('Please put your User Name').toUpperCase();
-let ivaCgral = 0 //tiene el valor final + IVA de la cuenta de carrito
-let stockProducts = [] //Stock de productos de la tienda
-let flagchkp = false
-let promo = "" //Mensaje para las promos
-
-const iva = x => x * 0.21; //Funcion flecha para calcular el iva a la cuenta 
-
 /*Product Class */
 class Product {
     constructor(id, name, price, quantity, img) {
@@ -34,6 +17,67 @@ class Product {
     }
 
 }
+/*Cart Class */
+class Cart {
+    constructor(obj) {
+        this.idProd = obj.idProd;
+        this.prod = obj.prod;
+        this.quantity = obj.quantity;
+    }
+
+    add(item) {
+        /*
+        if (this.idProd == []) {
+            this.idProd.push(item.id)
+            this.prod.push(item)
+            this.quantity[0] = 1;
+            
+        }else{
+            const indexProd = this.idProd.indexOf(item.id)
+            if ( indexProd == -1){
+                this.idProd.push(item.id)
+                this.prod.push(item)
+                this.quantity.push(1);    
+            }else{
+                this.prod[indexProd] = item
+                this.quantity[indexProd]++
+            }
+        }
+            */
+        const indexProd = this.idProd.indexOf(item.id)
+        if ( indexProd == -1){
+            this.idProd.push(item.id)
+            this.prod.push(item)
+            this.quantity.push(1);    
+        }else{
+            this.prod[indexProd] = item
+            this.quantity[indexProd]++
+        }
+        cartSum++;
+        console.log(this.prod)
+    }
+
+}
+
+//get the shop cart information from local storage
+let shopCart = new Cart(JSON.parse(localStorage.getItem("shopCart")) ?? {idProd:[], prod:[], quantity:[]}) //
+//sum the prices of the shop cart to know initian price.
+console.log(shopCart)
+let cartPrice = shopCart.prod.reduce((acc, product) => acc + product.price, 0);
+let cartSum = shopCart.quantity.reduce((acc, a) => acc + a, 0);
+//show on shop cart button the initical value
+document.getElementById("cartCount").innerHTML = `${cartSum} - $${cartPrice}`;
+
+//const edadPersona = parseInt(prompt('Ingrese su edad'))
+//let dineroEncuenta = parseInt(prompt('Ingrese Dinero en su Cuenta'))
+let userName = prompt('Please put your User Name').toUpperCase();
+let ivaCgral = 0 //tiene el valor final + IVA de la cuenta de carrito
+let stockProducts = [] //Stock de productos de la tienda
+let flagchkp = false
+let promo = "" //Mensaje para las promos
+
+const iva = x => x * 0.21; //Funcion flecha para calcular el iva a la cuenta 
+
 
 /*message function */
 function fMensaje(mAlert, mConsola) {
@@ -48,16 +92,17 @@ function add2Cart(product) {
     } else {
         return false // the product has no Stock 
     }
-
-    shopCart.push(product)
+    shopCart.add(product)
+    //shopCart.push(product)
 
     cartPrice = cartPrice + product.price // adding product price to cart total cost
     alert("You added " + product.name.toUpperCase() + " to the Shopcart")
-    document.getElementById("cartCount").innerHTML = `${shopCart.length} - $${cartPrice}`; //Adding total items and cost on en cart button
+    document.getElementById("cartCount").innerHTML = `${cartSum} - $${cartPrice}`; //Adding total items and cost on en cart button
     localStorage.setItem("shopCart", JSON.stringify(shopCart)); //save information on the local storage
-    localStorage.setItem("totalCarrito", shopCart.length) //save total items on the localstorage
+    localStorage.setItem("totalCarrito", cartSum) //save total items on the localstorage
     console.log("Added to ShopCart: " + product)
     console.log("Ramaining Stock of this product : " + product.quantity)
+    console.log(shopCart)
     return true
 }
 /*Funcion para calcular promociones*/
@@ -83,32 +128,30 @@ function newProducts() {
 }
 
 stockProducts = newProducts()
+
 //Add user name to the navBar
 const titulo = document.querySelector("h1");
 titulo.textContent = "Hello " + userName;
 
-//Agregamos el titulo de los articulos disponibles.
-const tituloArt = document.querySelectorAll("h5");
-const tarjeta = document.body.querySelectorAll(".card-body");
-
 stockProducts.forEach((product) => {
     const idButton = `add-cart${product.id}`
+    const {id, img, name, price} = product
     document.getElementById("section-card").innerHTML += `<div class="col mb-5">
     <div class="card h-100">
         <!-- Product image-->
-        <img class="card-img-top" src="${product.img}" alt="..." />
+        <img class="card-img-top" src="${img}" alt="..." />
         <!-- Product details-->
         <div class="card-body p-4">
             <div class="text-center">
                 <!-- Product name-->
-                <h5 class="fw-bolder">${product.name}</h5>
+                <h5 class="fw-bolder">${name}</h5>
                 <!-- Product price-->
-                $${product.price}
+                $${price}
             </div>
         </div>
         <!-- Product actions-->
         <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-            <div class="text-center"><a id="${idButton}" data-id="${product.id}" class="btn btn-outline-dark mt-auto" href="#">Add to cart </a></div>
+            <div class="text-center"><a id="${idButton}" data-id="${id}" class="btn btn-outline-dark mt-auto" href="#">Add to cart </a></div>
         </div>
     </div>
 </div>`;
@@ -125,10 +168,7 @@ inputText.addEventListener("keydown", (event) => {
                 flagchkp = true
             }
         })
-        if (!flagchkp) {
-            fMensaje("This product does not exist", "You need to enter same name as on the card")
-
-        }
+        !flagchkp && fMensaje("This product does not exist", "You need to enter same name as on the card")
         inputText.value = ""
     }
 });
@@ -137,26 +177,26 @@ inputText.addEventListener("keydown", (event) => {
 document.addEventListener('click', (e) => {
     // Retrieve id from clicked element
     let elementId = e.target.id;
+
     // If element has id
-    console.log(elementId)
     str = elementId.slice(0, 8)
     if ((elementId == "cartButton") || (elementId == "cartCount")) {
         document.getElementById("cart-modal").innerHTML = ""
         shopCart.forEach((product) => {
-
+            const { img, name, quantity, price} = product
             document.getElementById("cart-modal").innerHTML += `
             <div class="d-flex flex-row justify-content-between align-items-center p-2 bg-white mt-4 px-3 rounded">
-            <div class="mr-1"><img class="rounded" src="${product.img}" width="70"></div>
-            <div class="d-flex flex-column align-items-center product-details"><span class="font-weight-bold">${product.name}</span>
+            <div class="mr-1"><img class="rounded" src="${img}" width="70"></div>
+            <div class="d-flex flex-column align-items-center product-details"><span class="font-weight-bold">${name}</span>
 
                 <div class="d-flex flex-row product-desc">
-                    <div class="size mr-1"><span class="text-grey">Qty Available:</span><span class="font-weight-bold">&nbsp;${product.quantity}</span></div>
+                    <div class="size mr-1"><span class="text-grey">Qty Available:</span><span class="font-weight-bold">&nbsp;${quantity}</span></div>
                 </div>
                </div>
             <div class="d-flex flex-row align-items-center qty"><i class="fa fa-minus text-danger"></i>
                 <h5 class="text-grey mt-1 mr-1 ml-1">1</h5><i class="fa fa-plus text-success"></i></div>
             <div>
-                <h5 class="text-grey">$${product.price}</h5>
+                <h5 class="text-grey">$${price}</h5>
             </div>
             <div class="d-flex align-items-center"><i class="fa fa-trash mb-1 text-danger"></i></div>
             </div>`;
@@ -178,10 +218,7 @@ document.addEventListener('click', (e) => {
     } else if (str == "add-cart") {
         stockProducts.forEach((product) => {
             const idButton = `add-cart${product.id}`
-            if (elementId == idButton) {
-                add2Cart(product)
-                console.log(shopCart)
-            }
+            elementId == idButton && (add2Cart(product) ? console.log("OK") : fMensaje("Out of Stock!", "No more stock for this product"))
         })
 
     } else {
