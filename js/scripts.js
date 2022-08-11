@@ -132,7 +132,7 @@ stockProducts = newProducts()
 //Add user name to the navBar
 const titulo = document.querySelector("h1");
 titulo.textContent = "Hello " + userName;
-
+//Create stock cards from stock on the main page.
 stockProducts.forEach((product) => {
     const idButton = `add-cart${product.id}`
     const {id, img, name, price} = product
@@ -156,7 +156,7 @@ stockProducts.forEach((product) => {
     </div>
 </div>`;
 })
-
+// adding prduct manually
 inputText = document.getElementById("ManualImput")
 inputText.addEventListener("keydown", (event) => {
 
@@ -173,7 +173,7 @@ inputText.addEventListener("keydown", (event) => {
     }
 });
 
-//Event listener
+// Event listener for Button click.
 document.addEventListener('click', (e) => {
     // Retrieve id from clicked element
     let elementId = e.target.id;
@@ -182,8 +182,10 @@ document.addEventListener('click', (e) => {
     str = elementId.slice(0, 8)
     if ((elementId == "cartButton") || (elementId == "cartCount")) {
         document.getElementById("cart-modal").innerHTML = ""
-        shopCart.forEach((product) => {
-            const { img, name, quantity, price} = product
+        shopCart.prod.forEach((product) => {
+            const { id, img, name, quantity, price} = product // Destruct for product array
+            const indexProd = shopCart.idProd.indexOf(id) // get the index of this product
+            const totalPriceProd = price * shopCart.quantity[indexProd] //get the total price for this product
             document.getElementById("cart-modal").innerHTML += `
             <div class="d-flex flex-row justify-content-between align-items-center p-2 bg-white mt-4 px-3 rounded">
             <div class="mr-1"><img class="rounded" src="${img}" width="70"></div>
@@ -194,9 +196,9 @@ document.addEventListener('click', (e) => {
                 </div>
                </div>
             <div class="d-flex flex-row align-items-center qty"><i class="fa fa-minus text-danger"></i>
-                <h5 class="text-grey mt-1 mr-1 ml-1">1</h5><i class="fa fa-plus text-success"></i></div>
+                <h5 class="text-grey mt-1 mr-1 ml-1">${shopCart.quantity[indexProd]}</h5><i class="fa fa-plus text-success"></i></div>
             <div>
-                <h5 class="text-grey">$${price}</h5>
+                <h5 class="text-grey">$${totalPriceProd}</h5>
             </div>
             <div class="d-flex align-items-center"><i class="fa fa-trash mb-1 text-danger"></i></div>
             </div>`;
@@ -206,10 +208,10 @@ document.addEventListener('click', (e) => {
         if (confirm('Are you sure you want to erase all items?')) {
             shopCart = [];
             cartPrice = 0;
-            document.getElementById("cart-modal").innerHTML = ""
-            localStorage.removeItem("shopCart")
-            localStorage.removeItem("totalCarrito")
-            document.getElementById("cartCount").innerHTML = "0";
+            document.getElementById("cart-modal").innerHTML = "" //delete cart modal
+            localStorage.removeItem("shopCart") // remover from local storage
+            localStorage.removeItem("totalCarrito") //remove from local storage
+            document.getElementById("cartCount").innerHTML = "0"; // put to cero cart quantity
             console.log('All cart items were deleted');
         } else {
             // Do nothing!
@@ -218,6 +220,7 @@ document.addEventListener('click', (e) => {
     } else if (str == "add-cart") {
         stockProducts.forEach((product) => {
             const idButton = `add-cart${product.id}`
+            //if the button correspond to the item, add it to the cart, if it is out of sotck show message
             elementId == idButton && (add2Cart(product) ? console.log("OK") : fMensaje("Out of Stock!", "No more stock for this product"))
         })
 
