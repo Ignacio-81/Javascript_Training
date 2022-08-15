@@ -26,24 +26,6 @@ class Cart {
     }
 
     add(item) {
-        /*
-        if (this.idProd == []) {
-            this.idProd.push(item.id)
-            this.prod.push(item)
-            this.quantity[0] = 1;
-            
-        }else{
-            const indexProd = this.idProd.indexOf(item.id)
-            if ( indexProd == -1){
-                this.idProd.push(item.id)
-                this.prod.push(item)
-                this.quantity.push(1);    
-            }else{
-                this.prod[indexProd] = item
-                this.quantity[indexProd]++
-            }
-        }
-            */
         const indexProd = this.idProd.indexOf(item.id)
         if (indexProd == -1) {
             this.idProd.push(item.id)
@@ -68,10 +50,6 @@ let cartSum = shopCart.quantity.reduce((acc, a) => acc + a, 0);
 //show on shop cart button the initical value
 document.getElementById("cartCount").innerHTML = `${cartSum} - $${cartPrice}`;
 
-//const edadPersona = parseInt(prompt('Ingrese su edad'))
-//let dineroEncuenta = parseInt(prompt('Ingrese Dinero en su Cuenta'))
-//let userName = prompt('Please put your User Name').toUpperCase();
-
 let ivaCgral = 0 //tiene el valor final + IVA de la cuenta de carrito
 let stockProducts = [] //Stock de productos de la tienda
 let flagchkp = false
@@ -92,12 +70,24 @@ function add2Cart(product) {
     //shopCart.push(product)
 
     cartPrice = cartPrice + product.price // adding product price to cart total cost
+/*
     Swal.fire({
         icon: 'success',
         title: "You've added " + product.name.toUpperCase() + " to the Shopcart",
         showConfirmButton: false,
         timer: 2000
     })
+    */
+    Toastify({
+        text: "You've added " + product.name.toUpperCase() + " to the Shopcart",
+        duration: 3000,
+        gravity: 'top',
+        position: 'right',
+        style: {
+            background: 'linear-gradient(to right, #00b09b, #96c92d)'
+        }
+
+    }).showToast();
     //alert("You added " + product.name.toUpperCase() + " to the Shopcart")
     document.getElementById("cartCount").innerHTML = `${cartSum} - $${cartPrice}`; //Adding total items and cost on en cart button
     localStorage.setItem("shopCart", JSON.stringify(shopCart)); //save information on the local storage
@@ -248,20 +238,6 @@ document.addEventListener('click', (e) => {
                 )
             }
         })
-        /*
-      if (confirm('Are you sure you want to erase all items?')) {
-          shopCart = [];
-          cartPrice = 0;
-          document.getElementById("cart-modal").innerHTML = "" //delete cart modal
-          localStorage.removeItem("shopCart") // remover from local storage
-          localStorage.removeItem("totalCarrito") //remove from local storage
-          document.getElementById("cartCount").innerHTML = "0"; // put to cero cart quantity
-          console.log('All cart items were deleted');
-      } else {
-          // Do nothing!
-          console.log('No action');
-      }
-      */
     } else if (str == "add-cart") {
         stockProducts.forEach((product) => {
             const idButton = `add-cart${product.id}`
