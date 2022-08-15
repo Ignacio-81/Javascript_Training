@@ -45,11 +45,11 @@ class Cart {
         }
             */
         const indexProd = this.idProd.indexOf(item.id)
-        if ( indexProd == -1){
+        if (indexProd == -1) {
             this.idProd.push(item.id)
             this.prod.push(item)
-            this.quantity.push(1);    
-        }else{
+            this.quantity.push(1);
+        } else {
             this.prod[indexProd] = item
             this.quantity[indexProd]++
         }
@@ -60,7 +60,7 @@ class Cart {
 }
 
 //get the shop cart information from local storage
-let shopCart = new Cart(JSON.parse(localStorage.getItem("shopCart")) ?? {idProd:[], prod:[], quantity:[]}) //
+let shopCart = new Cart(JSON.parse(localStorage.getItem("shopCart")) ?? { idProd: [], prod: [], quantity: [] }) //
 //sum the prices of the shop cart to know initian price.
 console.log(shopCart)
 let cartPrice = shopCart.prod.reduce((acc, product) => acc + product.price, 0);
@@ -70,7 +70,8 @@ document.getElementById("cartCount").innerHTML = `${cartSum} - $${cartPrice}`;
 
 //const edadPersona = parseInt(prompt('Ingrese su edad'))
 //let dineroEncuenta = parseInt(prompt('Ingrese Dinero en su Cuenta'))
-let userName = prompt('Please put your User Name').toUpperCase();
+//let userName = prompt('Please put your User Name').toUpperCase();
+
 let ivaCgral = 0 //tiene el valor final + IVA de la cuenta de carrito
 let stockProducts = [] //Stock de productos de la tienda
 let flagchkp = false
@@ -79,11 +80,6 @@ let promo = "" //Mensaje para las promos
 const iva = x => x * 0.21; //Funcion flecha para calcular el iva a la cuenta 
 
 
-/*message function */
-function fMensaje(mAlert, mConsola) {
-    alert(mAlert);
-    console.log(mConsola);
-}
 //Cart function
 function add2Cart(product) {
 
@@ -96,7 +92,13 @@ function add2Cart(product) {
     //shopCart.push(product)
 
     cartPrice = cartPrice + product.price // adding product price to cart total cost
-    alert("You added " + product.name.toUpperCase() + " to the Shopcart")
+    Swal.fire({
+        icon: 'success',
+        title: "You've added " + product.name.toUpperCase() + " to the Shopcart",
+        showConfirmButton: false,
+        timer: 2000
+    })
+    //alert("You added " + product.name.toUpperCase() + " to the Shopcart")
     document.getElementById("cartCount").innerHTML = `${cartSum} - $${cartPrice}`; //Adding total items and cost on en cart button
     localStorage.setItem("shopCart", JSON.stringify(shopCart)); //save information on the local storage
     localStorage.setItem("totalCarrito", cartSum) //save total items on the localstorage
@@ -127,15 +129,32 @@ function newProducts() {
     return [prod1, prod2, prod3, prod4, prod5]
 }
 
-stockProducts = newProducts()
+async function userInicio() {
 
-//Add user name to the navBar
-const titulo = document.querySelector("h1");
-titulo.textContent = "Hello " + userName;
+  const { value: userName } = await Swal.fire({
+    title: 'Enter your User Name',
+    input: 'text',
+
+    inputValidator: (value) => {
+      if (!value) {
+        return 'You need to write your User Name!'
+      }else{
+        //Add user name to the navBar
+        const titulo = document.querySelector("h1");
+        titulo.textContent = "Hello " + value;
+      }
+    }
+  })
+  
+}
+
+stockProducts = newProducts()
+userInicio()
+
 //Create stock cards from stock on the main page.
 stockProducts.forEach((product) => {
     const idButton = `add-cart${product.id}`
-    const {id, img, name, price} = product
+    const { id, img, name, price } = product
     document.getElementById("section-card").innerHTML += `<div class="col mb-5">
     <div class="card h-100">
         <!-- Product image-->
@@ -168,7 +187,7 @@ inputText.addEventListener("keydown", (event) => {
                 flagchkp = true
             }
         })
-        !flagchkp && fMensaje("This product does not exist", "You need to enter same name as on the card")
+        !flagchkp && Swal.fire('The proudct does not exist', '', 'info')
         inputText.value = ""
     }
 });
@@ -183,7 +202,7 @@ document.addEventListener('click', (e) => {
     if ((elementId == "cartButton") || (elementId == "cartCount")) {
         document.getElementById("cart-modal").innerHTML = ""
         shopCart.prod.forEach((product) => {
-            const { id, img, name, quantity, price} = product // Destruct for product array
+            const { id, img, name, quantity, price } = product // Destruct for product array
             const indexProd = shopCart.idProd.indexOf(id) // get the index of this product
             const totalPriceProd = price * shopCart.quantity[indexProd] //get the total price for this product
             document.getElementById("cart-modal").innerHTML += `
@@ -205,23 +224,49 @@ document.addEventListener('click', (e) => {
 
         })
     } else if (elementId == "cart-remove") {
-        if (confirm('Are you sure you want to erase all items?')) {
-            shopCart = [];
-            cartPrice = 0;
-            document.getElementById("cart-modal").innerHTML = "" //delete cart modal
-            localStorage.removeItem("shopCart") // remover from local storage
-            localStorage.removeItem("totalCarrito") //remove from local storage
-            document.getElementById("cartCount").innerHTML = "0"; // put to cero cart quantity
-            console.log('All cart items were deleted');
-        } else {
-            // Do nothing!
-            console.log('No action');
-        }
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You will remove items from cart",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, remove all!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                shopCart = [];
+                cartPrice = 0;
+                document.getElementById("cart-modal").innerHTML = "" //delete cart modal
+                localStorage.removeItem("shopCart") // remover from local storage
+                localStorage.removeItem("totalCarrito") //remove from local storage
+                document.getElementById("cartCount").innerHTML = "0"; // put to cero cart quantity
+                console.log('All cart items were deleted');
+                Swal.fire(
+                    'Removed',
+                    'All the items were removed.',
+                    'success'
+                )
+            }
+        })
+        /*
+      if (confirm('Are you sure you want to erase all items?')) {
+          shopCart = [];
+          cartPrice = 0;
+          document.getElementById("cart-modal").innerHTML = "" //delete cart modal
+          localStorage.removeItem("shopCart") // remover from local storage
+          localStorage.removeItem("totalCarrito") //remove from local storage
+          document.getElementById("cartCount").innerHTML = "0"; // put to cero cart quantity
+          console.log('All cart items were deleted');
+      } else {
+          // Do nothing!
+          console.log('No action');
+      }
+      */
     } else if (str == "add-cart") {
         stockProducts.forEach((product) => {
             const idButton = `add-cart${product.id}`
             //if the button correspond to the item, add it to the cart, if it is out of sotck show message
-            elementId == idButton && (add2Cart(product) ? console.log("OK") : fMensaje("Out of Stock!", "No more stock for this product"))
+            elementId == idButton && (add2Cart(product) ? console.log("OK") : Swal.fire('out of stock!'))
         })
 
     } else {
