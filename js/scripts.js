@@ -177,7 +177,13 @@ inputText.addEventListener("keydown", (event) => {
                 flagchkp = true
             }
         })
-        !flagchkp && Swal.fire('The proudct does not exist', '', 'info')
+        !flagchkp && Swal.fire({ 
+            icon: 'error', 
+            title: 'The proudct does not exist', 
+            showConfirmButton: false,
+            timer: 1500
+          })
+        // !flagchkp && Swal.fire('The proudct does not exist', '', 'info')
         inputText.value = ""
     }
 });
