@@ -1,0 +1,9 @@
+[
+    { "id" : 1, "name" : "Ferrari Roja", "price":50, "quantity":5, "img":"./assets/img/ferrari.jpg"},
+    { "id" : 2, "name" : "Camaro Amarillo", "price":75, "quantity":10, "img":"./assets/img/camaro.jpg"},
+    { "id" : 3, "name" : "Combo x5", "price":4500, "quantity":10, "img":"./assets/img/combo.jpg"},
+    { "id" : 4, "name" : "Delorian Plata", "price":25, "quantity":7, "img":"./assets/img/delorian.jpg"},
+    { "id" : 5, "name" : "Audi TT Blanco", "price":250, "quantity":8, "img":"./assets/img/audiTT.jpg"}
+    
+
+]

@@ -70,14 +70,6 @@ function add2Cart(product) {
     //shopCart.push(product)
 
     cartPrice = cartPrice + product.price // adding product price to cart total cost
-/*
-    Swal.fire({
-        icon: 'success',
-        title: "You've added " + product.name.toUpperCase() + " to the Shopcart",
-        showConfirmButton: false,
-        timer: 2000
-    })
-    */
     Toastify({
         text: "You've added " + product.name.toUpperCase() + " to the Shopcart",
         duration: 3000,
@@ -109,43 +101,31 @@ function promociones(edad, cuenta) {
     }
     return cuenta
 }
-/*function to create new products*/
-function newProducts() {
-    const prod1 = new Product(1, "Ferrari Roja", 50, 5, "./assets/img/ferrari.jpg")
-    const prod2 = new Product(2, "Camaro Amarillo", 75, 10, "./assets/img/camaro.jpg")
-    const prod3 = new Product(3, "Combo x5", 4500, 10, "./assets/img/combo.jpg")
-    const prod4 = new Product(4, "Delorian Plata", 25, 10, "./assets/img/delorian.jpg")
-    const prod5 = new Product(5, "Audi TT Blanco", 250, 10, "./assets/img/audiTT.jpg")
-    return [prod1, prod2, prod3, prod4, prod5]
-}
 
 async function userInicio() {
 
-  const { value: userName } = await Swal.fire({
-    title: 'Enter your User Name',
-    input: 'text',
+    const { value: userName } = await Swal.fire({
+        title: 'Enter your User Name',
+        input: 'text',
 
-    inputValidator: (value) => {
-      if (!value) {
-        return 'You need to write your User Name!'
-      }else{
-        //Add user name to the navBar
-        const titulo = document.querySelector("h1");
-        titulo.textContent = "Hello " + value;
-      }
-    }
-  })
-  
+        inputValidator: (value) => {
+            if (!value) {
+                return 'You need to write your User Name!'
+            } else {
+                //Add user name to the navBar
+                const titulo = document.querySelector("h1");
+                titulo.textContent = "Hello " + value;
+            }
+        }
+    })
+
 }
-
-stockProducts = newProducts()
-userInicio()
-
 //Create stock cards from stock on the main page.
-stockProducts.forEach((product) => {
-    const idButton = `add-cart${product.id}`
-    const { id, img, name, price } = product
-    document.getElementById("section-card").innerHTML += `<div class="col mb-5">
+const renderProducts = (data) =>{
+    data.forEach((product) => {
+        const idButton = `add-cart${product.id}`
+        const { id, img, name, price } = product
+        document.getElementById("section-card").innerHTML += `<div class="col mb-5">
     <div class="card h-100">
         <!-- Product image-->
         <img class="card-img-top" src="${img}" alt="..." />
@@ -164,7 +144,27 @@ stockProducts.forEach((product) => {
         </div>
     </div>
 </div>`;
-})
+    })
+}
+
+const getProducts = () =>{
+    fetch('./productsA.json')
+        .then((response) => response.json())
+        .then(data => {
+            data.forEach((product) =>{
+                stockProducts.push (new Product(...product))
+            })
+
+            console.log(stockProducts);
+            renderProducts(stockProducts)
+        })
+
+}
+
+getProducts()
+userInicio()
+
+
 // adding prduct manually
 inputText = document.getElementById("ManualImput")
 inputText.addEventListener("keydown", (event) => {
@@ -177,13 +177,12 @@ inputText.addEventListener("keydown", (event) => {
                 flagchkp = true
             }
         })
-        !flagchkp && Swal.fire({ 
-            icon: 'error', 
-            title: 'The proudct does not exist', 
+        !flagchkp && Swal.fire({
+            icon: 'error',
+            title: 'The proudct does not exist',
             showConfirmButton: false,
             timer: 1500
-          })
-        // !flagchkp && Swal.fire('The proudct does not exist', '', 'info')
+        })
         inputText.value = ""
     }
 });

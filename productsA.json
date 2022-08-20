@@ -1,0 +1,8 @@
+[
+    [1, "Ferrari Roja", 50, 5, "./assets/img/ferrari.jpg"],
+    [2, "Camaro Amarillo", 75, 10, "./assets/img/camaro.jpg"],
+    [3, "Combo x5", 4500, 10, "./assets/img/combo.jpg"],
+    [4, "Delorian Plata", 25, 10, "./assets/img/delorian.jpg"],
+    [5, "Audi TT Blanco", 250, 10, "./assets/img/audiTT.jpg"]
+
+]
