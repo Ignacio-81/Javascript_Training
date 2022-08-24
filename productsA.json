@@ -4,8 +4,8 @@
     [3, "Combo x5", 4500, 5, "./assets/img/combo.jpg"],
     [4, "Delorian Plata", 25, 8, "./assets/img/delorian.jpg"],
     [5, "Audi TT Blanco", 250, 10, "./assets/img/audiTT.jpg"],
-    [3, "Lamborghini", 50, 8, "./assets/img/lamborghini.jpg"],
-    [4, "Motor Kit for custom cars", 150, 6, "./assets/img/motorkit.jpg"],
-    [5, "WHeels Kit", 50, 5, "./assets/img/wheelskit.jpg"]
+    [6, "Lamborghini", 50, 8, "./assets/img/lamborghini.jpg"],
+    [7, "Motor Kit for custom cars", 150, 6, "./assets/img/motorkit.jpg"],
+    [8, "WHeels Kit", 50, 5, "./assets/img/wheelskit.jpg"]
 
 ]

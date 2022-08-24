@@ -121,7 +121,7 @@ async function userInicio() {
 
 }
 //Create stock cards from stock on the main page.
-const renderProducts = (data) =>{
+const renderProducts = (data) => {
     data.forEach((product) => {
         const idButton = `add-cart${product.id}`
         const { id, img, name, price } = product
@@ -147,23 +147,90 @@ const renderProducts = (data) =>{
     })
 }
 
-const getProducts = () =>{
+const getProducts = () => {
     fetch('./productsA.json')
         .then((response) => response.json())
         .then(data => {
-            data.forEach((product) =>{
-                stockProducts.push (new Product(...product))
+            data.forEach((product) => {
+                stockProducts.push(new Product(...product))
             })
 
-            console.log(stockProducts);
             renderProducts(stockProducts)
         })
 
 }
 
+const getUSDvalue = () => {
+    return new Promise((resolve, reject) => {
+
+        setTimeout(() => {
+            fetch('https://api.bluelytics.com.ar/v2/latest')//.then((resp) => resp.json())
+                .then(function (response) {
+                    console.log(response)
+                    if (response.ok) {
+                        fetch('https://api.bluelytics.com.ar/v2/latest')
+                            .then((resp) => resp.json())
+                            .then(function (response) { resolve(response) })
+
+                    } else {
+                        reject('web is ok , but we got a wrong answer');
+                    }
+                })
+                .catch(function (error) {
+                    reject('WE have a problem with "Fetch" command:' + error.message);
+                });
+        }, 3000)
+    })
+}
+
+getUSDvalue().then((response) => {
+    let curr = ""
+    document.getElementById("currencyTableBody").innerHTML +=""
+    Object.keys(response).forEach((key) => {
+    if ((key == "oficial") || (key == "blue") ) {curr = "USD"}
+    else if ((key == "oficial_euro") || (key == "blue_euro") ){curr = "EUR"}
+    if (key != "last_update"){
+    document.getElementById("currencyTableBody").innerHTML += `
+    
+        <tr>
+            <th scope="row">${key} ${curr}</th>
+            <td>$${response[key].value_avg}</td>
+            <td>$${response[key].value_sell}</td>
+            <td>$${response[key].value_buy}</td>
+      </tr>
+    `
+    }else{
+        document.getElementById("currencyTableBody").innerHTML += `
+        <th scope="row">${key}</th>
+        <td colspan="3">${response[key].slice(0,10)}</td>
+        `
+    }
+    })
+
+}).catch((error) => {
+    console.log(error)
+
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong!',
+        footer: '<a href="">Why do I have this issue?</a>'
+    })
+})
+
+/*
+const getUSDvalue = () => {
+    fetch('https://api.bluelytics.com.ar/v2/latest')
+      .then((res) => res.json())
+      .then ( data => {
+          console.log(data)
+      })
+
+}
+*/
+getUSDvalue()
 getProducts()
 userInicio()
-
 
 // adding prduct manually
 inputText = document.getElementById("ManualImput")
