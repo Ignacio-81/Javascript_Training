@@ -43,9 +43,10 @@ class Cart {
 
 //get the shop cart information from local storage
 let shopCart = new Cart(JSON.parse(localStorage.getItem("shopCart")) ?? { idProd: [], prod: [], quantity: [] }) //
-//sum the prices of the shop cart to know initian price.
+
 console.log(shopCart)
 let cartPrice = shopCart.prod.reduce((acc, product) => acc + product.price, 0);
+//sum the prices of the shop cart to know initial price.
 let cartSum = shopCart.quantity.reduce((acc, a) => acc + a, 0);
 //show on shop cart button the initical value
 document.getElementById("cartCount").innerHTML = `${cartSum} - $${cartPrice}`;
@@ -53,12 +54,8 @@ document.getElementById("cartCount").innerHTML = `${cartSum} - $${cartPrice}`;
 let ivaCgral = 0 //tiene el valor final + IVA de la cuenta de carrito
 let stockProducts = [] //Stock de productos de la tienda
 let flagchkp = false
-let promo = "" //Mensaje para las promos
 
-const iva = x => x * 0.21; //Funcion flecha para calcular el iva a la cuenta 
-
-
-//Cart function
+//Cart function to manage Add , popups messages and product stock availability 
 function add2Cart(product) {
 
     if (product.available) { //check if the product is available
@@ -67,7 +64,6 @@ function add2Cart(product) {
         return false // the product has no Stock 
     }
     shopCart.add(product)
-    //shopCart.push(product)
 
     cartPrice = cartPrice + product.price // adding product price to cart total cost
     Toastify({
@@ -80,7 +76,6 @@ function add2Cart(product) {
         }
 
     }).showToast();
-    //alert("You added " + product.name.toUpperCase() + " to the Shopcart")
     document.getElementById("cartCount").innerHTML = `${cartSum} - $${cartPrice}`; //Adding total items and cost on en cart button
     localStorage.setItem("shopCart", JSON.stringify(shopCart)); //save information on the local storage
     localStorage.setItem("totalCarrito", cartSum) //save total items on the localstorage
@@ -89,19 +84,7 @@ function add2Cart(product) {
     console.log(shopCart)
     return true
 }
-/*Funcion para calcular promociones*/
-function promociones(edad, cuenta) {
-    promo = 0
-    if (edad > 50) {
-        cuenta = cuenta * 0.5
-        promo = "Felicitaciones, tenes 50% por ser mayor de 50 años!"
-    } else if (edad > 30) {
-        cuenta = cuenta * 0.75
-        promo = "Felicitaciones, tenes 25% por ser mayor de 30 años!"
-    }
-    return cuenta
-}
-
+//Function to get the user name and put it on the header.
 async function userInicio() {
 
     const { value: userName } = await Swal.fire({
@@ -146,12 +129,13 @@ const renderProducts = (data) => {
 </div>`;
     })
 }
-
+//Function to get products list from JSON local file
 const getProducts = () => {
     fetch('./productsA.json')
         .then((response) => response.json())
         .then(data => {
             data.forEach((product) => {
+                //for each product we create a new object and we push it to the stock product variable.
                 stockProducts.push(new Product(...product))
             })
 
@@ -159,15 +143,15 @@ const getProducts = () => {
         })
 
 }
-
+//Function to connect , check connection and get currency information.
 const getUSDvalue = () => {
     return new Promise((resolve, reject) => {
-
-        setTimeout(() => {
-            fetch('https://api.bluelytics.com.ar/v2/latest')//.then((resp) => resp.json())
+    
+        setTimeout(() => { //Time out for fetch connect request
+            fetch('https://api.bluelytics.com.ar/v2/latest')
                 .then(function (response) {
                     console.log(response)
-                    if (response.ok) {
+                    if (response.ok) { //if status answer is 200 = OK then get information
                         fetch('https://api.bluelytics.com.ar/v2/latest')
                             .then((resp) => resp.json())
                             .then(function (response) { resolve(response) })
@@ -182,14 +166,15 @@ const getUSDvalue = () => {
         }, 3000)
     })
 }
-
+//Function to get USD values for Argentina and create currency table DOM
 getUSDvalue().then((response) => {
     let curr = ""
     document.getElementById("currencyTableBody").innerHTML +=""
+    //we go through each key on the answer in order to add currency letters
     Object.keys(response).forEach((key) => {
     if ((key == "oficial") || (key == "blue") ) {curr = "USD"}
     else if ((key == "oficial_euro") || (key == "blue_euro") ){curr = "EUR"}
-    if (key != "last_update"){
+    if (key != "last_update"){ //if the data is a currency
     document.getElementById("currencyTableBody").innerHTML += `
     
         <tr>
@@ -199,7 +184,7 @@ getUSDvalue().then((response) => {
             <td>$${response[key].value_buy}</td>
       </tr>
     `
-    }else{
+    }else{ //if the data is the last update day/time information
         document.getElementById("currencyTableBody").innerHTML += `
         <th scope="row">${key}</th>
         <td colspan="3">${response[key].slice(0,10)}</td>
@@ -207,48 +192,41 @@ getUSDvalue().then((response) => {
     }
     })
 
-}).catch((error) => {
+}).catch((error) => { //Generic error message 
     console.log(error)
 
     Swal.fire({
         icon: 'error',
         title: 'Oops...',
         text: 'Something went wrong!',
-        footer: '<a href="">Why do I have this issue?</a>'
     })
 })
 
-/*
-const getUSDvalue = () => {
-    fetch('https://api.bluelytics.com.ar/v2/latest')
-      .then((res) => res.json())
-      .then ( data => {
-          console.log(data)
-      })
-
-}
-*/
-getUSDvalue()
+// we get currency values at the beginning 
+getUSDvalue() 
+//We get the product Stock from local JSON 
 getProducts()
+//We get the user name at the beginning
 userInicio()
 
 // adding prduct manually
 inputText = document.getElementById("ManualImput")
 inputText.addEventListener("keydown", (event) => {
 
-    if (event.key == "Enter") { //Tecla enter
-        flagchkp = false
+    if (event.key == "Enter") { //Enter key pressed
+        flagchkp = false //flog to detect if a product was added, if not, the product does not exists
         stockProducts.forEach((product) => {
             if (product.name == inputText.value) {
-                add2Cart(product)
+                //if the product typed correspond to a product, add it to the cart, if it is out of sotck show message
                 flagchkp = true
+                add2Cart(product) ? console.log("OK") : flagchkp = false
             }
         })
         !flagchkp && Swal.fire({
             icon: 'error',
-            title: 'The proudct does not exist',
+            title: 'The product is out of Stock or it does not exist',
             showConfirmButton: false,
-            timer: 1500
+            timer: 2000
         })
         inputText.value = ""
     }
@@ -261,7 +239,7 @@ document.addEventListener('click', (e) => {
 
     // If element has id
     str = elementId.slice(0, 8)
-    if ((elementId == "cartButton") || (elementId == "cartCount")) {
+    if ((elementId == "cartButton") || (elementId == "cartCount")) { //Cart Button was clicked
         document.getElementById("cart-modal").innerHTML = ""
         shopCart.prod.forEach((product) => {
             const { id, img, name, quantity, price } = product // Destruct for product array
@@ -285,8 +263,8 @@ document.addEventListener('click', (e) => {
             </div>`;
 
         })
-    } else if (elementId == "cart-remove") {
-        Swal.fire({
+    } else if (elementId == "cart-remove") { //Remove cart item button was clicked
+        Swal.fire({ //Confirmation message to remove Cart items
             title: 'Are you sure?',
             text: "You will remove items from cart",
             icon: 'warning',
@@ -294,8 +272,8 @@ document.addEventListener('click', (e) => {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, remove all!'
-        }).then((result) => {
-            if (result.isConfirmed) {
+        }).then((result) => { 
+            if (result.isConfirmed) { //if YES
                 shopCart = [];
                 cartPrice = 0;
                 document.getElementById("cart-modal").innerHTML = "" //delete cart modal
@@ -310,7 +288,7 @@ document.addEventListener('click', (e) => {
                 )
             }
         })
-    } else if (str == "add-cart") {
+    } else if (str == "add-cart") { //add to cart button was clicked
         stockProducts.forEach((product) => {
             const idButton = `add-cart${product.id}`
             //if the button correspond to the item, add it to the cart, if it is out of sotck show message
@@ -318,6 +296,7 @@ document.addEventListener('click', (e) => {
         })
 
     } else {
+        //only for internal test purpose
         console.log("An element without an id was clicked.");
     }
 }
