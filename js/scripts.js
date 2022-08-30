@@ -51,7 +51,6 @@ let cartSum = shopCart.quantity.reduce((acc, a) => acc + a, 0);
 //show on shop cart button the initical value
 document.getElementById("cartCount").innerHTML = `${cartSum} - $${cartPrice}`;
 
-let ivaCgral = 0 //tiene el valor final + IVA de la cuenta de carrito
 let stockProducts = [] //Stock de productos de la tienda
 let flagchkp = false
 
